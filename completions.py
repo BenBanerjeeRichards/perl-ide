@@ -3,10 +3,8 @@ import sublime_plugin
 import threading
 import random
 from .main import *
+from .server import *
 
-def index_project(project_files):
-    res = post_request("index-project", {"projectFiles": project_files})
-    return res
 
 def get_completions(complete_type, params, word_separators):
     params["projectFiles"] = get_project_files()
@@ -30,18 +28,6 @@ def get_completions(complete_type, params, word_separators):
 
     log_info(completions)
     return completions
-
-
-class IndexProjectThread(threading.Thread):
-
-    def __init__(self, on_complete, project_files):
-        super(IndexProjectThread, self).__init__()
-        self.project_files = project_files
-        self.on_complete = on_complete
-
-    def run(self):
-        log_info("Indexing project...")
-        self.on_complete(index_project(self.project_files))
 
 
 # To python, our autocomplete request is just an IO operation (network operation)
@@ -121,38 +107,6 @@ class PerlCompletionsListener(sublime_plugin.EventListener):
         completion_thread.start()
 
         return ([], sublime.INHIBIT_WORD_COMPLETIONS | sublime.INHIBIT_EXPLICIT_COMPLETIONS)
-
-    def on_activated(self, view):
-        set_status("", view)
-        if not os_supported():
-            set_status(STATUS_OS_NOT_SUPPORTED, view)
-            return
-        if not arch_supported():
-            set_status(STATUS_ARCH_NOT_SUPPORTED, view)
-            return
-
-        update_menu()
-        if not current_view_is_perl():
-            return
-        else:
-            print("LOAD PERL")
-            set_status(STATUS_ON_LOAD, view)
-            log_info("Loaded perl file, checking server")
-            start_server()
-            if ping():
-                set_status(STATUS_READY, view)
-            else:
-                set_status(STATUS_STOPPED, view)
-                return
-
-            # Indexing project
-            set_status(STATUS_INDEXING, view)
-            indexer = IndexProjectThread(self.on_index_complete, get_project_files())
-            indexer.start()
-
-    def on_index_complete(self, res):
-        log_info("Indexing complete, res = {}".format(res))
-        set_status(STATUS_READY)
 
     def on_completions_done(self, job_id, completions):
         log_info("Autocomplete job #{} with completions = {}".format(job_id, completions))
