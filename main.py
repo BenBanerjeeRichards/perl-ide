@@ -58,3 +58,20 @@ class PerlIdeListener(sublime_plugin.EventListener):
     def on_index_complete(self, res):
         log_info("Indexing complete, res = {}".format(res))
         set_status(STATUS_READY)
+
+
+
+# Command to move cursor to specific position in current view
+class MoveCursorCommand(sublime_plugin.TextCommand):
+    def run(self, edit, line, col, path):
+        sublime.active_window().open_file("{}:{}:{}".format(path, line, col), sublime.ENCODED_POSITION)
+
+
+
+class ReloadServerCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        log_info("Restarting server")
+        stop_server()
+        start_server()
+
+
