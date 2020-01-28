@@ -1,5 +1,5 @@
 from .server import *
-
+from .util import *
 import sublime
 import sublime_plugin
 
@@ -65,7 +65,6 @@ def build_usage_panel_contents(usage_groups, num_usages=0):
     for file in usage_groups:
         contents += "{}:\n".format(file)
 
-        lines = []
         path = file
         if file == view.file_name():
             path = tempfile.gettempdir() + "/PerlComplete.pl"
@@ -107,7 +106,7 @@ def build_usage_panel_contents(usage_groups, num_usages=0):
                 # to ensure all lines are aligned
                 padding_size = 2 + (line_num_digits - len(str(line)))
                 padding_size += (0 if line in group else 1)
-                padding = " " * padding_size;
+                padding = " " * padding_size
                 source_line = lines[line - 1]
                 colon = ":" if line in group else ""
                 contents += "  {}{}{}{}\n".format(line, colon, padding, source_line)

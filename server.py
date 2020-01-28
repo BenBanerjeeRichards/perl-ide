@@ -1,8 +1,8 @@
-import os
+import threading
+import platform
 import urllib
-import json
-
-from .main import *
+import time
+from .util import *
 
 def post_request(method, params, attempts=0):
     if attempts > POST_ATTEMPTS:
@@ -33,7 +33,8 @@ def get_exe_path():
     print("GET_EXE_PATH")
     plat = platform.system().lower()
     script_path = os.path.abspath(__file__)
-    lib_path = os.path.join(script_path, "lib")
+    script_dir = os.path.dirname(script_path)
+    lib_path = os.path.join(script_dir, "lib")
     if plat == "darwin":
         # macos
         return os.path.join(lib_path, "perlparser-mac")
@@ -49,28 +50,7 @@ def stop_server():
 
 
 def start_server():
-    # TODO reenable this and move into different thead
-    print("start_server()")
-    if not ping():
-        if not AUTO_RESTART:
-            set_status(STATUS_STOPPED)
-            return
-        log_info("Server stopped - starting again")
-        # Could not connect to server, needs to be started
-        # First stop any PerlParser processes that may be lying around for some reason
-        stop_server()
-        # os.system("nohup " + get_exe_path() + " serve &")
-        # print(get_exe_path())
-        # Wait for serve to come up
-        start = time.time()
-        while not ping():
-            diff = time.time() - start
-            # give up after a second
-            if diff > 1:
-                log_error("Server didn't start within one second")
-                return
-    else:
-        log_info("Server already running")
+    pass
 
 
 def ping():
