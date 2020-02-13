@@ -5,7 +5,7 @@ import sublime_plugin
 import threading
 
 # Allow restarting server
-AUTO_RESTART = False
+AUTO_RESTART = True
 
 
 class StartServerThread(threading.Thread):
