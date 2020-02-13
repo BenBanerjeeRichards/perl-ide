@@ -16,7 +16,7 @@ STATUS_ARCH_NOT_SUPPORTED = "Perl IDE ✖ - Architecture not supported"
 STATUS_LOADING = "Perl IDE ..."
 STATUS_INDEXING = "Perl IDE ... [Indexing Project]"
 STATUS_ON_LOAD = "Perl IDE"
-debug = True
+debug = False
 
 COMPLETE_SUB = "autocomplete-sub"
 COMPLETE_VAR = "autocomplete-var"
@@ -27,21 +27,18 @@ POST_ATTEMPTS = 5
 USAGE_GROUP_THRESHHOLD = 5
 USAGES_PANEL_NAME = "usages"
 
-# Allow restarting server
-AUTO_RESTART = True
-
 
 def log_info(msg):
-    print("[PerlComplete:INFO] - {}".format(msg))
+    print("[P_IDE:INFO] - {}".format(msg))
 
 
 def log_error(msg):
-    print("[PerlComplete:ERRO] - {}".format(msg))
+    print("[P_IDE:ERRO] - {}".format(msg))
 
 
 def log_debug(msg):
     if debug:
-        print("[PerlComplete:DEBG] - {}".format(msg))
+        print("[P_IDE:DEBG] - {}".format(msg))
 
 
 def set_status(status, view=None):
@@ -122,8 +119,12 @@ def update_menu():
     menu = []
     if current_view_is_perl():
         menu = [{"caption": "-"}, {"caption": "Find Usages", "command": "find_usages"},
-                {"caption": "Goto Declaration", "command": "goto_declaration"}, {"caption": "-"}, ]
+                {"caption": "Goto Declaration", "command": "goto_declaration"},
+                {"caption": "Rename...", "command": "rename_symbol"}, {"caption": "-"}, ]
 
     with open(file_path_context, "w+") as f:
         f.write(json.dumps(menu))
 
+
+def current_path():
+    return sublime.active_window().active_view().file_name()

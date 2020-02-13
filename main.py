@@ -4,6 +4,9 @@ import sublime
 import sublime_plugin
 import threading
 
+# Allow restarting server
+AUTO_RESTART = False
+
 
 class StartServerThread(threading.Thread):
     def __init__(self, on_started):
@@ -15,7 +18,7 @@ class StartServerThread(threading.Thread):
             if not AUTO_RESTART:
                 self.on_started(False)
                 return
-            log_info("Server stopped - starting again")
+            log_debug("Server stopped - starting again")
             # Could not connect to server, needs to be started
             # First stop any PerlParser processes that may be lying around for some reason
             stop_server()
@@ -30,11 +33,9 @@ class StartServerThread(threading.Thread):
                     self.on_started(False)
                     return
         else:
-            log_info("Server already running")
+            log_debug("Server already running")
 
         self.on_started(True)
-
-
 
 
 def index_project(project_files):
@@ -66,7 +67,7 @@ class IndexProjectThread(threading.Thread):
         self.on_complete = on_complete
 
     def run(self):
-        log_info("Indexing project...")
+        log_debug("Indexing project...")
         self.on_complete(index_project(self.project_files))
 
 
@@ -76,7 +77,7 @@ class PerlIdeListener(sublime_plugin.EventListener):
         pass
 
     def on_activated(self, view):
-        print("NEW LOAD")
+        log_info("Loaded Perl_IDE")
         set_status("", view)
         if not os_supported():
             set_status(STATUS_OS_NOT_SUPPORTED, view)
