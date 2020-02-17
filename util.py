@@ -17,6 +17,7 @@ STATUS_LOADING = "Perl IDE ..."
 STATUS_INDEXING = "Perl IDE ... [Indexing Project]"
 STATUS_ON_LOAD = "Perl IDE"
 debug = False
+info = False
 
 COMPLETE_SUB = "autocomplete-sub"
 COMPLETE_VAR = "autocomplete-var"
@@ -29,7 +30,8 @@ USAGES_PANEL_NAME = "usages"
 
 
 def log_info(msg):
-    print("[P_IDE:INFO] - {}".format(msg))
+    if info:
+        print("[P_IDE:INFO] - {}".format(msg))
 
 
 def log_error(msg):
