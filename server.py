@@ -4,6 +4,7 @@ import urllib
 import time
 from .util import *
 
+
 def post_request(method, params, attempts=0):
     if attempts > POST_ATTEMPTS:
         log_error("Failed to connect to complete server after 5 attempts")
@@ -30,7 +31,10 @@ def post_request(method, params, attempts=0):
 
 
 def get_exe_path():
-    print("GET_EXE_PATH")
+    # First check environment
+    if "PERL_IDE_SERVER" in os.environ:
+        return os.environ["PERL_IDE_SERVER"]
+
     plat = platform.system().lower()
     script_path = os.path.abspath(__file__)
     script_dir = os.path.dirname(script_path)
